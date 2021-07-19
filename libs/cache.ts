@@ -18,6 +18,7 @@ export function get<T extends Record<string, any>>(key: string, defaultValue: T)
         const dataString = fs.readFileSync(getCacheFilePath(key), 'utf-8') || '';
         return JSON.parse(dataString) as T;
     } catch (err) {
+        console.log('Notion: error from recover cache', err);
         return defaultValue as T;
     }
 }

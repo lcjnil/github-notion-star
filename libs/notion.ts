@@ -17,10 +17,12 @@ export class Notion {
         });
 
         this.pages = get(NAMESPACE, {});
+
+        console.log(`Notion: restored from cache, count is ${Object.keys(this.pages).length}`);
     }
 
     save() {
-        save(NAMESPACE, this.notion);
+        save(NAMESPACE, this.pages);
     }
 
     pages: Record<string, { id: string }> = {};

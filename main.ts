@@ -1,5 +1,6 @@
 import { github } from './libs/github';
 import { notion } from './libs/notion';
+import assert from 'assert';
 
 async function fullSync() {
     await Promise.all([github.fullSync(), notion.fullSync()]);
@@ -12,7 +13,8 @@ async function fullSync() {
 }
 
 async function partialSync() {
-    await Promise.all([github.getList(), notion.fullSync()]);
+    await github.getList();
+
     for (const repo of github.repoList) {
         if (notion.hasPage(repo.nameWithOwner)) {
             console.log(`Skip saved page ${repo.nameWithOwner}`);
@@ -21,6 +23,12 @@ async function partialSync() {
         await notion.insertPage(repo);
     }
 }
+
+const ENVS = ['NOTION_API_KEY', 'NOTION_DATABASE_ID', 'TOKEN_OF_GITHUB'];
+
+ENVS.forEach((env) => {
+    assert(process.env[env], `${env} must be added`);
+});
 
 if (process.env.FULL_SYNC) {
     fullSync();

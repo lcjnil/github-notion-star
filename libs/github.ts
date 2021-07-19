@@ -1,10 +1,6 @@
 import { Octokit } from '@octokit/core';
 import { QueryForStarredRepository, Repo } from './types';
 
-const client = new Octokit({
-    auth: process.env.GITHUB_AUTH_TOKEN,
-});
-
 export class Github {
     private client: Octokit;
 
