@@ -1,0 +1,29 @@
+{
+    "name": "notionstar",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "ts-node ./main.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/lcjnil/actions.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/lcjnil/actions/issues"
+    },
+    "homepage": "https://github.com/lcjnil/actions#readme",
+    "devDependencies": {
+        "prettier": "^2.3.2"
+    },
+    "dependencies": {
+        "@notionhq/client": "^0.2.2",
+        "@octokit/core": "^3.5.1",
+        "@tsconfig/node16": "^1.0.1",
+        "ts-node": "^10.1.0",
+        "typescript": "^4.3.5"
+    }
+}
