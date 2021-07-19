@@ -10,7 +10,7 @@ export class Github {
 
     constructor() {
         this.client = new Octokit({
-            auth: process.env.GITHUB_AUTH_TOKEN,
+            auth: process.env.TOKEN_OF_GITHUB,
         });
     }
 
@@ -18,7 +18,7 @@ export class Github {
 
     async fullSync() {
         // @ts-ignore
-        const limit = +process.env.GITHUB_FULLSYNC_LIMIT || 2000;
+        const limit = +process.env.FULLSYNC_LIMIT || 2000;
         console.log(`Github: Start to get all starred repos, limit is ${limit}`);
 
         let cursor = '';
@@ -39,6 +39,10 @@ export class Github {
     }
 
     async getList() {
+        // @ts-ignore
+        const limit = +process.env.PARTIALSYNC_LIMIT || 2000;
+        console.log(`Github: Start to sync latest starred repos, limit is ${limit}`);
+
         const data = await this.getLastStarredRepo(10);
         this.repoList.push(...data.starredRepositories.nodes);
     }
