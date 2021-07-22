@@ -1,29 +1,25 @@
-# This is a basic workflow to help you get started with Actions
-name: Sync Notion Star
+name: Partial Sync Notion Star
 
-# Controls when the workflow will run
 on:
-  workflow_dispatch:
-
+  schedule:
+    - cron: '*/10 * * * *'
 jobs:
-  full-sync:
+  partial-sync:
     runs-on: ubuntu-latest
     environment: notion-sync
     steps:
       - uses: actions/checkout@v2
-      
-      - name: Download artifact of last build
+
+      - name: Download cache storage of last build
         uses: dawidd6/action-download-artifact@v2
         continue-on-error: true
         with:
-          workflow: blank.yml
+          workflow: partial-sync.yml
           workflow_conclusion: success
           name: notion-sync-storage
           path: .cache
-          
-      - run: pwd && ls -al && ls .cache && cat .cache/notion-page.json
 
-      - name: Setup Node.js environment
+      - name: Setup environment
         uses: actions/setup-node@v2.2.0
         with:
           always-auth: false
@@ -32,7 +28,7 @@ jobs:
 
       - run: yarn
 
-      - name: Run Sync
+      - name: Run Partial Sync
         env:
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
@@ -41,7 +37,7 @@ jobs:
           PARTIALSYNC_LIMIT: 10
           SYNC_NOTION_FIRST: ${{ steps.cache.outputs.cache-hit != 'true' }}
         run: npm start
-        
+
       - uses: actions/upload-artifact@v2
         with:
           name: notion-sync-storage

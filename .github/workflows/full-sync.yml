@@ -1,0 +1,30 @@
+name: FullSync Notion Star
+
+on:
+  workflow_dispatch:
+
+jobs:
+  full-sync:
+    runs-on: ubuntu-latest
+    environment: notion-sync
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup environment
+        uses: actions/setup-node@v2.2.0
+        with:
+          always-auth: false
+          node-version: 16.x
+          cache: yarn
+
+      - run: yarn
+
+      - name: Run Full Sync
+        env:
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          TOKEN_OF_GITHUB: ${{ secrets.TOKEN_OF_GITHUB }}
+          FULLSYNC_LIMIT: 2000
+          PARTIALSYNC_LIMIT: 10
+          SYNC_NOTION_FIRST: ${{ steps.cache.outputs.cache-hit != 'true' }}
+        run: npm start

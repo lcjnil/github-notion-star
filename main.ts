@@ -3,7 +3,7 @@ import { notion } from './libs/notion';
 import assert from 'assert';
 
 async function fullSync() {
-    await Promise.all([github.fullSync(), notion.fullSync()]);
+    await Promise.all([github.fullSync(), notion.fullSyncIfNeeded()]);
 
     for (const repo of github.repoList) {
         if (!notion.hasPage(repo.nameWithOwner)) {
@@ -13,13 +13,14 @@ async function fullSync() {
 }
 
 async function partialSync() {
-    await github.getList();
+    await Promise.all([github.getList(), notion.fullSyncIfNeeded()]);
 
     for (const repo of github.repoList) {
         if (notion.hasPage(repo.nameWithOwner)) {
             console.log(`Skip saved page ${repo.nameWithOwner}`);
             continue;
         }
+
         await notion.insertPage(repo);
     }
 }

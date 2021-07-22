@@ -34,7 +34,12 @@ export class Notion {
     /**
      * full-sync pages in database
      */
-    async fullSync() {
+    async fullSyncIfNeeded() {
+        if (Object.keys(this.pages).length) {
+            console.log(`Notion: skipped sync due to cache`);
+            return;
+        }
+
         console.log('Notion: Start to get all pages');
 
         let hasNext = true;
