@@ -111,6 +111,13 @@ export class Notion {
                         },
                     ],
                 },
+                'Starred At': {
+                    type: 'date',
+                    date: {
+                        start: repo.starredAt,
+                        end: repo.starredAt,
+                    },
+                },
             },
         });
 

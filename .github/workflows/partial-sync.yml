@@ -35,7 +35,6 @@ jobs:
           TOKEN_OF_GITHUB: ${{ secrets.TOKEN_OF_GITHUB }}
           FULLSYNC_LIMIT: 2000
           PARTIALSYNC_LIMIT: 10
-          SYNC_NOTION_FIRST: ${{ steps.cache.outputs.cache-hit != 'true' }}
         run: npm start
 
       - uses: actions/upload-artifact@v2

@@ -4,6 +4,7 @@ export interface Repo {
     nameWithOwner: string;
     url: string;
     description: string;
+    starredAt: string;
 }
 
 export interface QueryForStarredRepository {
@@ -13,13 +14,16 @@ export interface QueryForStarredRepository {
             endCursor: string;
             hasNextPage: boolean;
         };
-        nodes: Repo[];
+        edges: Array<{
+            starredAt: string;
+            node: Omit<Repo, 'starredAt'>;
+        }>;
     };
 }
 
 export interface NotionPage extends Page {
     properties: {
         Name: TitlePropertyValue;
-        Url: URLPropertyValue;
+        Link: URLPropertyValue;
     };
 }

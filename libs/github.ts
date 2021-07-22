@@ -21,9 +21,14 @@ export class Github {
         let hasNextPage = true;
         const repoList = [];
 
-        while (hasNextPage || repoList.length >= limit) {
+        while (hasNextPage || repoList.length < limit) {
             const data = await this.getStarredRepoAfterCursor(cursor);
-            repoList.push(...data.starredRepositories.nodes);
+            repoList.push(
+                ...(data.starredRepositories.edges || []).map(({ node, starredAt }) => ({
+                    ...node,
+                    starredAt,
+                })),
+            );
 
             hasNextPage = data.starredRepositories.pageInfo.hasNextPage;
             cursor = data.starredRepositories.pageInfo.endCursor;
@@ -36,11 +41,16 @@ export class Github {
 
     async getList() {
         // @ts-ignore
-        const limit = +process.env.PARTIALSYNC_LIMIT || 2000;
+        const limit = +process.env.PARTIALSYNC_LIMIT || 10;
         console.log(`Github: Start to sync latest starred repos, limit is ${limit}`);
 
         const data = await this.getLastStarredRepo(10);
-        this.repoList.push(...data.starredRepositories.nodes);
+        this.repoList.push(
+            ...(data.starredRepositories.edges || []).map(({ node, starredAt }) => ({
+                ...node,
+                starredAt,
+            })),
+        );
     }
 
     private async getStarredRepoAfterCursor(cursor: string) {
@@ -54,10 +64,13 @@ export class Github {
                                 endCursor
                                 hasNextPage
                             }
-                            nodes {
-                                nameWithOwner
-                                url
-                                description
+                            edges {
+                                starredAt
+                                node {
+                                    nameWithOwner
+                                    url
+                                    description
+                                }
                             }
                         }
                     }
@@ -86,6 +99,14 @@ export class Github {
                                 nameWithOwner
                                 url
                                 description
+                            }
+                            edges {
+                                starredAt
+                                node {
+                                    nameWithOwner
+                                    url
+                                    description
+                                }
                             }
                         }
                     }
