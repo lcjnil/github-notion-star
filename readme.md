@@ -1,6 +1,8 @@
-# notion-start
+# github-notion-star
 
-Manage all your Github Starred repo with Notion Database and Github Actions;
+Manage all your Github Starred repos with Notion Database and Github Actions;
+
+## Features
 
 ## Environements
 
