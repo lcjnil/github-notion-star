@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: notion-sync
     steps:
+      - uses: actions/checkout@v2
+      
       - name: Download artifact of last build
         uses: dawidd6/action-download-artifact@v2
         continue-on-error: true
@@ -19,9 +21,7 @@ jobs:
           name: notion-sync-storage
           path: .cache
           
-      - run: ls -al && ls .cache && cat .cache/notion-page.json
-         
-      - uses: actions/checkout@v2
+      - run: pwd && ls -al && ls .cache && cat .cache/notion-page.json
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.2.0
