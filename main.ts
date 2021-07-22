@@ -15,7 +15,7 @@ async function fullSync() {
 async function partialSync() {
     await Promise.all([github.getList(), notion.fullSyncIfNeeded()]);
 
-    for (const repo of github.repoList) {
+    for (const repo of github.repoList.reverse()) {
         if (notion.hasPage(repo.nameWithOwner)) {
             console.log(`Skip saved page ${repo.nameWithOwner}`);
             continue;

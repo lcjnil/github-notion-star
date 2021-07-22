@@ -27,4 +27,5 @@ jobs:
           FULLSYNC_LIMIT: 2000
           PARTIALSYNC_LIMIT: 10
           SYNC_NOTION_FIRST: ${{ steps.cache.outputs.cache-hit != 'true' }}
+          FULL_SYNC: true
         run: npm start
