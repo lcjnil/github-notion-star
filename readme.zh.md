@@ -4,7 +4,8 @@
 
 ## 功能
 
-- 支持自定义
+- （可选）支持全量同步所有的 star 到 notion
+- （可选）支持使用 Github Actions 定时同步增量的 star 到 notion
 
 ## 设置
 - 在 Notion 上复制这个[模板](https://lcj.notion.site/Github-Notion-Star-f07e2f086e4d4f5b9f25693814c836de)
