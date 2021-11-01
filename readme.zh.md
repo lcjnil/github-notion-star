@@ -18,7 +18,7 @@
 除此之外，还可以修改环境变量的形式修改当前的配置，例如：
 
 - `FULLSYNC_LIMIT` 全量同步的最大 Repo 个数，默认为 2000 个
-- `PARTIALSYNC_LIMIT` 增量同步的最大 Repo 个数，每次增量同步会从后往前取若干条数据，默认为 20 个
+- `PARTIALSYNC_LIMIT` 增量同步的最大 Repo 个数，每次增量同步会从后往前取若干条数据，默认为 10 个
 
 需要在 `github/workflows/*.yml` 中，修改这个配置
 

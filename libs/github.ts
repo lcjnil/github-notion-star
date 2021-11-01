@@ -44,7 +44,7 @@ export class Github {
         const limit = +process.env.PARTIALSYNC_LIMIT || 10;
         console.log(`Github: Start to sync latest starred repos, limit is ${limit}`);
 
-        const data = await this.getLastStarredRepo(10);
+        const data = await this.getLastStarredRepo(limit);
         this.repoList.push(
             ...(data.starredRepositories.edges || []).map(({ node, starredAt }) => ({
                 ...node,
