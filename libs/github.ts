@@ -1,5 +1,5 @@
 import { Octokit } from '@octokit/core';
-import { QueryForStarredRepository, Repo } from './types';
+import { QueryForStarredRepository, Repo, githubRepositoryTopic, repositoryTopic } from './types';
 
 export class Github {
     private client: Octokit;
@@ -20,14 +20,12 @@ export class Github {
         let cursor = '';
         let hasNextPage = true;
         const repoList = [];
+        const topicFirst = 50;
 
         while (hasNextPage || repoList.length < limit) {
-            const data = await this.getStarredRepoAfterCursor(cursor);
+            const data = await this.getStarredRepoAfterCursor(cursor, topicFirst);
             repoList.push(
-                ...(data.starredRepositories.edges || []).map(({ node, starredAt }) => ({
-                    ...node,
-                    starredAt,
-                })),
+                ...this.transformGithubStarResponse(data),
             );
 
             hasNextPage = data.starredRepositories.pageInfo.hasNextPage;
@@ -42,21 +40,30 @@ export class Github {
     async getList() {
         // @ts-ignore
         const limit = +process.env.PARTIALSYNC_LIMIT || 10;
+        const topicFirst = 50;
+
         console.log(`Github: Start to sync latest starred repos, limit is ${limit}`);
 
-        const data = await this.getLastStarredRepo(limit);
+        const data = await this.getLastStarredRepo(limit, topicFirst);
         this.repoList.push(
-            ...(data.starredRepositories.edges || []).map(({ node, starredAt }) => ({
-                ...node,
-                starredAt,
-            })),
+            ...this.transformGithubStarResponse(data),
         );
     }
 
-    private async getStarredRepoAfterCursor(cursor: string) {
+    private transformGithubStarResponse(data: QueryForStarredRepository): Repo[] {
+        return (data.starredRepositories.edges || []).map(({ node, starredAt }) => ({
+            ...node,
+            starredAt,
+            repositoryTopics: (node.repositoryTopics.nodes || []).map(
+                (o: githubRepositoryTopic): repositoryTopic => ({ name: o?.topic?.name })
+            ),
+        }))
+    }
+
+    private async getStarredRepoAfterCursor(cursor: string, topicFirst: number) {
         const data = await this.client.graphql<{ viewer: QueryForStarredRepository }>(
             `
-                query ($after: String) {
+                query ($after: String, $topicFirst: Int) {
                     viewer {
                         starredRepositories(after: $after) {
                             pageInfo {
@@ -70,6 +77,17 @@ export class Github {
                                     nameWithOwner
                                     url
                                     description
+                                    primaryLanguage {
+                                        name
+                                    }
+                                    repositoryTopics(first: $topicFirst) {
+                                        nodes {
+                                            topic {
+                                                name
+                                            }
+                                        }
+                                    }
+                                    updatedAt
                                 }
                             }
                         }
@@ -78,16 +96,17 @@ export class Github {
             `,
             {
                 after: cursor,
+                topicFirst: topicFirst,
             },
         );
 
         return data.viewer;
     }
 
-    private async getLastStarredRepo(last: number) {
+    private async getLastStarredRepo(last: number, topicFirst: number) {
         const data = await this.client.graphql<{ viewer: QueryForStarredRepository }>(
             `
-                query ($last: Int) {
+                query ($last: Int, $topicFirst: Int) {
                     viewer {
                         starredRepositories(last: $last) {
                             pageInfo {
@@ -106,6 +125,17 @@ export class Github {
                                     nameWithOwner
                                     url
                                     description
+                                    primaryLanguage {
+                                        name
+                                    }
+                                    repositoryTopics(first: $topicFirst) {
+                                        nodes {
+                                            topic {
+                                                name
+                                            }
+                                        }
+                                    }
+                                    updatedAt
                                 }
                             }
                         }
@@ -114,6 +144,7 @@ export class Github {
             `,
             {
                 last: last,
+                topicFirst: topicFirst,
             },
         );
 
