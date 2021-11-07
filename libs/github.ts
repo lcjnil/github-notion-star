@@ -1,6 +1,7 @@
 import { Octokit } from '@octokit/core';
 import { QueryForStarredRepository, Repo, GithubRepositoryTopic, RepositoryTopic } from './types';
 
+// @ts-ignore
 const githubTopicsFirst = +process.env.REPO_TOPICS_LIMIT || 50;
 
 export class Github {
