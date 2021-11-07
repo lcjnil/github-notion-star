@@ -114,12 +114,12 @@ export class Notion {
                 "Primary Language": {
                     type: 'select',
                     select: {
-                        name: repo.primaryLanguage.name,
+                        name: repo?.primaryLanguage?.name || 'null',
                     },
                 },
                 "Repository Topics": {
                     type: 'multi_select',
-                    multi_select: repo.repositoryTopics,
+                    multi_select: repo.repositoryTopics || [],
                 },
                 'Starred At': {
                     type: 'date',

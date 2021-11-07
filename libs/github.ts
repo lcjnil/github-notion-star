@@ -54,7 +54,7 @@ export class Github {
         return (data.starredRepositories.edges || []).map(({ node, starredAt }) => ({
             ...node,
             starredAt,
-            repositoryTopics: (node.repositoryTopics.nodes || []).map(
+            repositoryTopics: (node?.repositoryTopics?.nodes || []).map(
                 (o: GithubRepositoryTopic): RepositoryTopic => ({ name: o?.topic?.name })
             ),
         }))
