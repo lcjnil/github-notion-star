@@ -1,5 +1,5 @@
 import { Octokit } from '@octokit/core';
-import { QueryForStarredRepository, Repo, githubRepositoryTopic, repositoryTopic } from './types';
+import { QueryForStarredRepository, Repo, GithubRepositoryTopic, RepositoryTopic } from './types';
 
 export class Github {
     private client: Octokit;
@@ -55,7 +55,7 @@ export class Github {
             ...node,
             starredAt,
             repositoryTopics: (node.repositoryTopics.nodes || []).map(
-                (o: githubRepositoryTopic): repositoryTopic => ({ name: o?.topic?.name })
+                (o: GithubRepositoryTopic): RepositoryTopic => ({ name: o?.topic?.name })
             ),
         }))
     }

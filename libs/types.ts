@@ -1,15 +1,15 @@
 import { Page, TitlePropertyValue, URLPropertyValue, SelectOptionWithName } from '@notionhq/client/build/src/api-types';
 
 
-export interface repositoryTopic extends SelectOptionWithName {
+export interface RepositoryTopic extends SelectOptionWithName {
     name: string;
 }
 
-export interface githubRepositoryTopic  {
-    topic: repositoryTopic;
+export interface GithubRepositoryTopic  {
+    topic: RepositoryTopic;
 }
 export interface GithubRepositoryTopicConnection  {
-    nodes: githubRepositoryTopic[];
+    nodes: GithubRepositoryTopic[];
 }
 
 export interface Language {
@@ -22,7 +22,7 @@ export interface Repo {
     description: string;
     starredAt: string;
     primaryLanguage: Language;
-    repositoryTopics: repositoryTopic[];
+    repositoryTopics: RepositoryTopic[];
     updatedAt: string;
 }
 
