@@ -19,6 +19,7 @@
 
 - `FULLSYNC_LIMIT` 全量同步的最大 Repo 个数，默认为 2000 个
 - `PARTIALSYNC_LIMIT` 增量同步的最大 Repo 个数，每次增量同步会从后往前取若干条数据，默认为 10 个
+- `REPO_TOPICS_LIMIT` Repo 添加的话题数量，默认取前 50 个
 
 需要在 `github/workflows/*.yml` 中，修改这个配置
 
