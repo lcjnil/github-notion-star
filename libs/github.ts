@@ -1,6 +1,8 @@
 import { Octokit } from '@octokit/core';
 import { QueryForStarredRepository, Repo, GithubRepositoryTopic, RepositoryTopic } from './types';
 
+const githubTopicsFirst = +process.env.REPO_TOPICS_LIMIT || 50;
+
 export class Github {
     private client: Octokit;
 
@@ -20,10 +22,9 @@ export class Github {
         let cursor = '';
         let hasNextPage = true;
         const repoList = [];
-        const topicFirst = 50;
 
         while (hasNextPage || repoList.length < limit) {
-            const data = await this.getStarredRepoAfterCursor(cursor, topicFirst);
+            const data = await this.getStarredRepoAfterCursor(cursor, githubTopicsFirst);
             repoList.push(
                 ...this.transformGithubStarResponse(data),
             );
@@ -40,11 +41,10 @@ export class Github {
     async getList() {
         // @ts-ignore
         const limit = +process.env.PARTIALSYNC_LIMIT || 10;
-        const topicFirst = 50;
 
         console.log(`Github: Start to sync latest starred repos, limit is ${limit}`);
 
-        const data = await this.getLastStarredRepo(limit, topicFirst);
+        const data = await this.getLastStarredRepo(limit, githubTopicsFirst);
         this.repoList.push(
             ...this.transformGithubStarResponse(data),
         );

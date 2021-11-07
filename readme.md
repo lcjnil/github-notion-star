@@ -11,3 +11,4 @@ Manage all your Github Starred repos with Notion Database and Github Actions;
 - NOTION_API_KEY
 - NOTION_DATABASE_ID
 - TOKEN_OF_GITHUB
+- REPO_TOPICS_LIMIT
