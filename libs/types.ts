@@ -1,10 +1,36 @@
-import { Page, TitlePropertyValue, URLPropertyValue } from '@notionhq/client/build/src/api-types';
+import { Page, TitlePropertyValue, URLPropertyValue, SelectOptionWithName } from '@notionhq/client/build/src/api-types';
 
-export interface Repo {
+export interface RepositoryTopic extends SelectOptionWithName {
+    name: string;
+}
+
+export interface GithubRepositoryTopic  {
+    topic: RepositoryTopic;
+}
+
+export interface GithubRepositoryTopicConnection  {
+    nodes: GithubRepositoryTopic[];
+}
+
+export interface Language {
+    name: string;
+}
+
+export interface RepoBase {
     nameWithOwner: string;
     url: string;
     description: string;
     starredAt: string;
+    primaryLanguage: Language;
+    updatedAt: string;
+}
+
+export interface Repo extends RepoBase {
+    repositoryTopics: RepositoryTopic[];
+}
+
+export interface GithubStarRepoNode extends RepoBase {
+    repositoryTopics: GithubRepositoryTopicConnection;
 }
 
 export interface QueryForStarredRepository {
@@ -16,7 +42,7 @@ export interface QueryForStarredRepository {
         };
         edges: Array<{
             starredAt: string;
-            node: Omit<Repo, 'starredAt'>;
+            node: GithubStarRepoNode;
         }>;
     };
 }
