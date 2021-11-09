@@ -111,13 +111,13 @@ export class Notion {
                         },
                     ],
                 },
-                "Primary Language": {
+                'Primary Language': {
                     type: 'select',
                     select: {
                         name: repo?.primaryLanguage?.name || 'null',
                     },
                 },
-                "Repository Topics": {
+                'Repository Topics': {
                     type: 'multi_select',
                     multi_select: repo.repositoryTopics || [],
                 },
@@ -126,12 +126,6 @@ export class Notion {
                     date: {
                         start: repo.starredAt,
                         end: repo.starredAt,
-                    },
-                },
-                'Updated At': {
-                    type: 'date',
-                    date: {
-                        start: repo.updatedAt,
                     },
                 },
             },
