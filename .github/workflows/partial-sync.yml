@@ -3,6 +3,7 @@ name: Partial Sync Notion Star
 on:
   schedule:
     - cron: '0 */2 * * *'
+  workflow_dispatch:
 jobs:
   partial-sync:
     runs-on: ubuntu-latest
