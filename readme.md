@@ -4,7 +4,7 @@
 
 ## Breaking Change
 
-从 [#4](https://github.com/lcjnil/github-notion-star/issues/4) 版本开始，增加了 `Primary launguage` 和 `Repository Topics` 两个参数（by @imfycc），需要在原有 database 中增加这两个选项，否则同步会失败。
+从 [#4](https://github.com/lcjnil/github-notion-star/issues/4) 版本开始，增加了 `Primary Language` 和 `Repository Topics` 两个参数（by @imfycc），需要在原有 database 中增加这两个选项，否则同步会失败。
 
 ## 功能
 
