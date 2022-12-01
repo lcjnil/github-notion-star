@@ -8,6 +8,8 @@ async function fullSync() {
     for (const repo of github.repoList) {
         if (!notion.hasPage(repo.nameWithOwner)) {
             await notion.insertPage(repo);
+        } else {
+            // update
         }
     }
 }

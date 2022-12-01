@@ -17,6 +17,7 @@
     },
     "homepage": "https://github.com/lcjnil/actions#readme",
     "devDependencies": {
+        "dotenv": "^16.0.3",
         "prettier": "^2.3.2"
     },
     "dependencies": {

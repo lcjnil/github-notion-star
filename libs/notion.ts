@@ -2,6 +2,9 @@ import { Client } from '@notionhq/client';
 import { NotionPage, Repo } from './types';
 import { DatabasesQueryResponse } from '@notionhq/client/build/src/api-endpoints';
 import { get, save } from './cache';
+import { writeFile } from 'fs';
+import path from 'path';
+
 
 // TODO: add assertion
 const databaseId = process.env.NOTION_DATABASE_ID as string;
@@ -75,7 +78,7 @@ export class Notion {
 
     async insertPage(repo: Repo) {
         if (repo.description && repo.description.length >= 2000) {
-            repo.description = repo.description.substr(0, 120) + '...'
+            repo.description = repo.description.substring(0, 120) + '...';
         }
         const data = await this.notion.pages.create({
             parent: {
@@ -139,6 +142,21 @@ export class Notion {
         console.log(`insert page ${repo.nameWithOwner} success, page id is ${data.id}`);
 
         this.save();
+    }
+
+    async updatePage(repo?: Repo) {
+        // repo.description = repo.description.slice(0, 500);
+        const res = await this.notion.databases.query({
+            database_id: databaseId,
+        });
+        writeFile(path.join(__dirname, '../examples/tmp/notion-table.json'), new Uint8Array(Buffer.from(JSON.stringify(res.results))), (err) => {
+            if (err) throw err;
+            console.log("saved")
+        })
+        // const data = await this.notion.pages.update({
+        //     archived: false,
+        //     page_id: repo.
+        // })
     }
 }
 
