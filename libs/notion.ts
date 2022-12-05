@@ -5,7 +5,6 @@ import { get, save } from './cache';
 import { writeFile } from 'fs';
 import path from 'path';
 
-
 // TODO: add assertion
 const databaseId = process.env.NOTION_DATABASE_ID as string;
 
@@ -13,6 +12,8 @@ const NAMESPACE = 'notion-page';
 
 export class Notion {
     private notion: Client;
+    pages: Record<string, { id: string }> = {};
+    pageList: NotionPage[] = [];
 
     constructor() {
         this.notion = new Client({
@@ -21,14 +22,16 @@ export class Notion {
 
         this.pages = get(NAMESPACE, {});
 
-        console.log(`Notion: restored from cache, count is ${Object.keys(this.pages).length}`);
+        console.log(
+            `Notion: restored from cache, count is ${
+                Object.keys(this.pages).length
+            }`,
+        );
     }
 
     save() {
         save(NAMESPACE, this.pages);
     }
-
-    pages: Record<string, { id: string }> = {};
 
     hasPage(name: string) {
         return !!this.pages[name];
@@ -49,11 +52,12 @@ export class Notion {
         let cursor: string | undefined = undefined;
 
         while (hasNext) {
-            const database: DatabasesQueryResponse = await this.notion.databases.query({
-                database_id: databaseId,
-                page_size: 100,
-                start_cursor: cursor,
-            });
+            const database: DatabasesQueryResponse =
+                await this.notion.databases.query({
+                    database_id: databaseId,
+                    page_size: 100,
+                    start_cursor: cursor,
+                });
 
             this.addPages(database.results as NotionPage[]);
             hasNext = database.has_more;
@@ -61,9 +65,34 @@ export class Notion {
             cursor = database.next_cursor;
         }
 
-        console.log(`Notion: Get all pages success, count is ${Object.keys(this.pages).length}`);
+        console.log(
+            `Notion: Get all pages success, count is ${
+                Object.keys(this.pages).length
+            }`,
+        );
 
         this.save();
+    }
+
+    async getPageList() {
+        let hasNext = true;
+        let cursor: string | undefined;
+
+        while (hasNext) {
+            const res: DatabasesQueryResponse =
+                await this.notion.databases.query({
+                    database_id: databaseId,
+                    page_size: 100,
+                    start_cursor: cursor,
+                });
+            this.pageList = this.pageList.concat(res.results as NotionPage[]);
+            hasNext = res.has_more;
+            cursor = res.next_cursor || undefined;
+        }
+
+        console.log(
+            `Notion: Get page list success, count is ${this.pageList.length}`,
+        );
     }
 
     addPages(pages: NotionPage[]) {
@@ -139,7 +168,9 @@ export class Notion {
 
         this.pages[repo.nameWithOwner] = { id: data.id };
 
-        console.log(`insert page ${repo.nameWithOwner} success, page id is ${data.id}`);
+        console.log(
+            `insert page ${repo.nameWithOwner} success, page id is ${data.id}`,
+        );
 
         this.save();
     }
@@ -149,14 +180,20 @@ export class Notion {
         const res = await this.notion.databases.query({
             database_id: databaseId,
         });
-        writeFile(path.join(__dirname, '../examples/tmp/notion-table.json'), new Uint8Array(Buffer.from(JSON.stringify(res.results))), (err) => {
-            if (err) throw err;
-            console.log("saved")
-        })
+        // writeFile(
+        //     path.join(__dirname, '../examples/tmp/notion-table.json'),
+        //     new Uint8Array(Buffer.from(JSON.stringify(res))),
+        //     (err) => {
+        //         if (err) throw err;
+        //         console.log('saved');
+        //         console.log('Notion: Database length is ');
+        //     },
+        // );
+
         // const data = await this.notion.pages.update({
         //     archived: false,
-        //     page_id: repo.
-        // })
+        //     // page_id:
+        // });
     }
 }
 

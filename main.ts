@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import { github } from './libs/github';
 import { notion } from './libs/notion';
 import assert from 'assert';
@@ -8,8 +11,6 @@ async function fullSync() {
     for (const repo of github.repoList) {
         if (!notion.hasPage(repo.nameWithOwner)) {
             await notion.insertPage(repo);
-        } else {
-            // update
         }
     }
 }
@@ -27,6 +28,12 @@ async function partialSync() {
     }
 }
 
+async function fullSyncAndUpdate() {
+    await Promise.all([github.fullSync(), notion.getPageList()]);
+    for (const page of notion.pageList) {
+    }
+}
+
 const ENVS = ['NOTION_API_KEY', 'NOTION_DATABASE_ID', 'TOKEN_OF_GITHUB'];
 
 ENVS.forEach((env) => {
@@ -34,7 +41,11 @@ ENVS.forEach((env) => {
 });
 
 if (process.env.FULL_SYNC) {
-    fullSync();
+    if (process.env.FULL_SYNC_UPDATE) {
+        fullSyncAndUpdate();
+    } else {
+        fullSync();
+    }
 } else {
     partialSync();
 }
