@@ -8,6 +8,8 @@ import path from 'path';
 // TODO: add assertion
 const databaseId = process.env.NOTION_DATABASE_ID as string;
 
+const DESC_LENGTH = 240;
+
 const NAMESPACE = 'notion-page';
 
 export class Notion {
@@ -89,6 +91,8 @@ export class Notion {
             hasNext = res.has_more;
             cursor = res.next_cursor || undefined;
         }
+
+        this.addPages(this.pageList);
 
         console.log(
             `Notion: Get page list success, count is ${this.pageList.length}`,
@@ -175,11 +179,12 @@ export class Notion {
         this.save();
     }
 
-    async updatePage(repo?: Repo) {
-        // repo.description = repo.description.slice(0, 500);
-        const res = await this.notion.databases.query({
-            database_id: databaseId,
-        });
+    async updatePage(repo: Repo, pageId: string) {
+        repo.description = repo.description
+            ? repo.description.length > DESC_LENGTH
+                ? repo.description.slice(0, DESC_LENGTH) + '...'
+                : repo.description.slice(0, DESC_LENGTH)
+            : '';
         // writeFile(
         //     path.join(__dirname, '../examples/tmp/notion-table.json'),
         //     new Uint8Array(Buffer.from(JSON.stringify(res))),
@@ -190,10 +195,64 @@ export class Notion {
         //     },
         // );
 
-        // const data = await this.notion.pages.update({
-        //     archived: false,
-        //     // page_id:
-        // });
+        // 只更新基本信息
+        const data = await this.notion.pages.update({
+            archived: false,
+            page_id: pageId,
+            properties: {
+                Name: {
+                    type: 'title',
+                    title: [
+                        {
+                            type: 'text',
+                            text: {
+                                content: repo.nameWithOwner,
+                            },
+                        },
+                    ],
+                },
+                Type: {
+                    type: 'select',
+                    select: {
+                        name: 'Star',
+                    },
+                },
+                Link: {
+                    type: 'url',
+                    url: repo.url,
+                },
+                Description: {
+                    type: 'rich_text',
+                    rich_text: [
+                        {
+                            type: 'text',
+                            text: {
+                                content: repo.description || '',
+                            },
+                        },
+                    ],
+                },
+                'Primary Language': {
+                    type: 'select',
+                    select: {
+                        name: repo?.primaryLanguage?.name || 'null',
+                    },
+                },
+                'Repository Topics': {
+                    type: 'multi_select',
+                    multi_select: repo.repositoryTopics || [],
+                },
+                'Starred At': {
+                    type: 'date',
+                    date: {
+                        start: repo.starredAt,
+                        end: repo.starredAt,
+                    },
+                },
+            },
+        });
+
+        console.log('Notion: Update successfully');
     }
 }
 

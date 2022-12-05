@@ -151,6 +151,10 @@ export class Github {
 
         return data.viewer;
     }
+
+    hasRepo(nameWithOwner: string): boolean {
+       return !!this.repoList.find(item => item.nameWithOwner === nameWithOwner) 
+    }
 }
 
 export const github = new Github();

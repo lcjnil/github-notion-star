@@ -31,6 +31,14 @@ async function partialSync() {
 async function fullSyncAndUpdate() {
     await Promise.all([github.fullSync(), notion.getPageList()]);
     for (const page of notion.pageList) {
+        const repoName = page.properties.Name.title[0].plain_text;
+        if (!github.hasRepo(repoName)) {
+            console.log(`${repoName} is not in your starred repositories anymore`)
+            continue
+        }
+        const repo = github.repoList.find(item => item.nameWithOwner === repoName)!;
+        // await 避免并发冲突
+        await notion.updatePage(repo, page.id)
     }
 }
 
