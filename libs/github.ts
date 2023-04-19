@@ -24,7 +24,7 @@ export class Github {
         let hasNextPage = true;
         const repoList = [];
 
-        while (hasNextPage || repoList.length < limit) {
+        while (hasNextPage && repoList.length < limit) {
             const data = await this.getStarredRepoAfterCursor(cursor, githubTopicsFirst);
             repoList.push(
                 ...this.transformGithubStarResponse(data),
