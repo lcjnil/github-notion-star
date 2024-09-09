@@ -39,7 +39,7 @@ jobs:
           REPO_TOPICS_LIMIT: 50
         run: npm start
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: notion-sync-storage
           path: .cache
